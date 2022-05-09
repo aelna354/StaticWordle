@@ -1,0 +1,68 @@
+/*Set font and center all text.*/
+body
+{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+/*We don't want the horizontal separator to be too wide.*/
+hr {width: 60%}
+
+/*Title font.*/
+#title
+{
+    font-size: 250%;
+    font-weight: bold;
+    letter-spacing: 4px;
+}
+
+/*Styling for the guessboard.*/
+#guessboard
+{
+    width: 320px;
+    height: 420px;
+
+    background-color: darkgray;
+
+    margin: 0 auto;
+    margin-top: 10px; /*Spacing between board and title*/
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* Styling for the tiles on the guessboard. */
+.tile
+{
+    /*The box.*/
+    border: 2px solid lightblue;
+    width: 60px;
+    height: 60px;
+    margin: 3px;
+
+    /*The text inside the box (the letter).*/
+    text-align: center;
+    color:black;
+    font-size: 250%;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*Green tiles (correct guesses)*/
+.green
+{ background-color: green; }
+
+/*Yellow tiles (incorrect guesses with letter present)*/
+.yellow
+{ background-color: yellow; }
+
+/*Red tiles (incorrect guesses without letter present)*/
+.red
+{ background-color: darkgray; }
+
+.green, .yellow, .red
+{
+    color: white;
+    border-color: white;
+}
