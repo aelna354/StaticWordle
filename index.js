@@ -122,7 +122,7 @@ function loadPuzzle()
     //Fetch a new word. Randomly select a word from the correct word list.
     correctWord = correctWords[Math.floor(Math.random()*correctWords.length)];
     correctWord = correctWord.toUpperCase();
-    console.log(correctWord); //This can be commented out when debugging/testing.
+    //console.log(correctWord); //This can be commented out when debugging/testing.
 
     //Remove all guess letters from the tiles.
     document.querySelectorAll(".tile").forEach(e => { e.innerText = "" });
