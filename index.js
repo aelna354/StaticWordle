@@ -5,29 +5,39 @@ NUMLETTERS = 5; //Letter (column) count
 var guessRow = 0;
 var guessCol = 0;
 
-//Has the game ended?
+//The correct word, and game over variable.
+var correctWord = "";
 var gameOver = false;
 
 //We already fetched acceptedWords[] and correctWords[] from words.js.
-//First, add the correctWords into the accepted one.
+//First, add the correctWords into the accepted word list.
 acceptedWords.push(...correctWords)
 
-//Now, randomly pick a word to be accepted.
-var correctWord = correctWords[Math.floor(Math.random()*correctWords.length)].toUpperCase()
-console.log(correctWord); //This can be commented out when debugging/testing.
-
 //Function to display a toast notification.
+//When the user fails the puzzle, a toast indicating the correct answer
+//is continuously displayed and no other toasts are shown.
+var toastingWrongAnswer = false;
 function toast(m)
 {
+    if (toastingWrongAnswer)
+        return;
+    
+    //Fetch toast element and update its text
     var x = document.getElementById("toast");
     x.innerText = m;
+
+    //Show toast
     x.classList.add("show");
-    setTimeout(function(){ x.classList = ""; }, 3000);  
+
+    //If failure message, show without timeout, otherwise with
+    if (m.includes("Sorry, you failed"))
+        toastingWrongAnswer = true;
+    if (!toastingWrongAnswer)
+        setTimeout(function(){ x.classList = ""; }, 3000);  
 }
 
 //Initialization function (to be ran when page loads).
-window.onload = function() { init(); }
-function init()
+window.onload = function()
 {
     //Create the gameboard.
     for (let i = 0; i < NUMGUESSES; i++)
@@ -46,7 +56,7 @@ function init()
     //Create the keyboard.
     let keyboard = [["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
     ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-    ["Enter", "Z", "X", "C", "V", "B", "N", "M", "⌫" ]]
+    ["Enter", "Z", "X", "C", "V", "B", "N", "M", "⌫", "Reset"]]
 
     for (var kRow of keyboard)
     {
@@ -71,6 +81,11 @@ function init()
                 tile.classList.add("keyboardKey")
                 tile.id = "BACKSPACE";
             }
+            else if (key == "Reset")
+            {
+                tile.classList.add("resetKey");
+                tile.id = "RESET";
+            }
             else
             {
                 tile.classList.add("keyboardKey")
@@ -88,11 +103,54 @@ function init()
 
     //Listen for key press.
     document.addEventListener("keydown", (e) => {if (!e.repeat) processInput(e.key.toUpperCase())});
+
+    //Function to load puzzle. This is its own
+    //function so the reset feature can also call it.
+    loadPuzzle();
 }
 
-//Function ran when key is pressed, or on-screen enter key is clicked.
+//This function is run when the page is loaded,
+//or when the reset button is clicked. Loads a
+//new puzzle.
+function loadPuzzle()
+{
+    //(Re-)iniitalize global variables.
+    guessRow = 0;
+    guessCol = 0;
+    gameOver = false;
+
+    //Fetch a new word. Randomly select a word from the correct word list.
+    correctWord = correctWords[Math.floor(Math.random()*correctWords.length)];
+    correctWord = correctWord.toUpperCase();
+    console.log(correctWord); //This can be commented out when debugging/testing.
+
+    //Remove all guess letters from the tiles.
+    document.querySelectorAll(".tile").forEach(e => { e.innerText = "" });
+
+    //Now, remove all hint colors from the tiles and keyboard kes.
+    ["green", "gray", "yellow"].forEach(color => {
+    document.querySelectorAll("." + color).forEach(e =>
+    e.classList.remove(color))});
+
+    //Close the toast message in case it is being shown perpetually.
+    if (toastingWrongAnswer)
+    {
+        toastingWrongAnswer = false;
+        document.getElementById("toast").classList = "";
+    }
+}
+
+//Function ran when key is pressed, or on-screen key is clicked.
 function processInput(key)
 {
+    //If resetting, ask for confirmation.
+    if (key == "RESET")
+    {
+        if (confirm("Would you like to reset the puzzle and obtain a new word?"))
+            loadPuzzle();
+        return;
+    }
+
     //Do nothing if the game has ended.
     if (gameOver)
         return;
@@ -120,7 +178,7 @@ function processInput(key)
         if (guessCol == NUMLETTERS)
             processGuess();
 
-            //Otherwise, inform the user they haven't entered all letters.
+        //Otherwise, inform the user they haven't entered all letters.
         else
             toast("You must enter a 5-letter word.");
     }
@@ -133,15 +191,16 @@ function processInput(key)
     }
 }
 
+//Function to process a guess once one is amade.
 function processGuess()
 {
-    //Check if the guessed word is valid.
+    //First, string up the guess.
     guess = "";
     for (let c = 0; c < NUMLETTERS; c++)
         guess += document.getElementById(guessRow + "-" + c).innerText;
     guess = guess.toLowerCase();
     
-    //If the word is not acceptable, return.
+    //If the word is not in the accepted list, return.
     if (!(acceptedWords.includes(guess)))
     {
         toast("Hmmm, that doesn't seem like a valid word.");
@@ -160,7 +219,7 @@ function processGuess()
             letterCount[letter] = 1;
     }    
 
-    //Now, we want to iterate twice. First, to check for all the (in)correct letters.
+    //Now, we want to iterate twice. First, to check for all the correct letters.
     correctCount = 0;
     for (let c = 0; c < NUMLETTERS; c++)
     {
@@ -172,9 +231,11 @@ function processGuess()
         {
             //Mark the tile and corresponding key tile as green.
             tile.classList.add("green");
+
             keyTile = document.getElementById(letter);
-            keyTile.classList.remove("yellow");
+            keyTile.classList.remove("yellow"); //In case it was previously yellow
             keyTile.classList.add("green");
+
             correctCount += 1;
             letterCount[letter] -= 1;
         }
@@ -185,7 +246,6 @@ function processGuess()
             toast("Good job, you got it!");
             gameOver = true;
         }
-
     }
 
     //Now, iterate again, to check incorrect position.
@@ -209,12 +269,12 @@ function processGuess()
         }
         //If the letter is not in the word, or, if the letter is in
         //the word but all the instances of it are already marked green/yellow,
-        //then mark this tile as red.
+        //then mark this tile as gray.
         else
         {
-            tile.classList.add("red");
+            tile.classList.add("gray");
             keyTile = document.getElementById(letter);
-            keyTile.classList.add("red");
+            keyTile.classList.add("gray");
         }
     }
 

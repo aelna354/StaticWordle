@@ -50,8 +50,8 @@ h1 { font-size: 250%; }
 /*Yellow tiles (incorrect guesses with letter present)*/
 .yellow { background-color: yellow; }
 
-/*Red tiles (incorrect guesses without letter present)*/
-.red { background-color: darkgray; }
+/*Gray tiles (incorrect guesses without letter present)*/
+.gray { background-color: darkgray; }
 
 /**Prevent text from being selectable.*/
 .tile, .keyboardKey, .enterKey { user-select: none; }
@@ -67,7 +67,7 @@ h1 { font-size: 250%; }
 }
 
 /*CSS for the keyboard's keys. Similar to guessboard tile CSS.*/
-.keyboardKey, .enterKey
+.keyboardKey, .enterKey, .resetKey
 {
     border: 1px solid black;
     width: 36px;
@@ -83,7 +83,9 @@ h1 { font-size: 250%; }
 }
 
 /*For the Enter key specifically.*/
-.enterKey { width: 75px; }
+.enterKey { width: 65px; background-color: blue; color: white; }
+
+.resetKey {width: 65px; background-color: green; color: white;}
 
 /*All of the CSS below this line is animating and styling the alert messages.*/
 #toast
@@ -99,7 +101,7 @@ h1 { font-size: 250%; }
     position: fixed;
     z-index: 1;
     left: 50%;
-    bottom: 30px;
+    top: 30px;
     font-size: 17px;
 }
   
@@ -112,24 +114,24 @@ h1 { font-size: 250%; }
   
 @-webkit-keyframes fadein
 {
-    from {bottom: 0; opacity: 0;} 
-    to {bottom: 30px; opacity: 1;}
+    from {top: 0; opacity: 0;} 
+    to {top: 30px; opacity: 1;}
 }
   
 @keyframes fadein
 {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
+    from {top: 0; opacity: 0;}
+    to {top: 30px; opacity: 1;}
 }
 
 @-webkit-keyframes fadeout
 {
-    from {bottom: 30px; opacity: 1;} 
-    to {bottom: 0; opacity: 0;}
+    from {top: 30px; opacity: 1;} 
+    to {top: 0; opacity: 0;}
 }
 
 @keyframes fadeout
 {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
+    from {top: 30px; opacity: 1;}
+    to {top: 0; opacity: 0;}
 }
