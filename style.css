@@ -3,29 +3,24 @@ body
 {
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
+    background-color: #eeeeee;
 }
 
 /*We don't want the horizontal separator to be too wide.*/
 hr {width: 60%}
 
 /*Title font.*/
-#title
-{
-    font-size: 250%;
-    font-weight: bold;
-    letter-spacing: 4px;
-}
+h1 { font-size: 250%; }
 
 /*Styling for the guessboard.*/
 #guessboard
 {
-    width: 320px;
+    width: 350px;
     height: 420px;
-
-    background-color: darkgray;
 
     margin: 0 auto;
     margin-top: 10px; /*Spacing between board and title*/
+    margin-bottom: 10px;
     display: flex;
     flex-wrap: wrap;
 }
@@ -34,7 +29,7 @@ hr {width: 60%}
 .tile
 {
     /*The box.*/
-    border: 2px solid lightblue;
+    border: 2px solid darkgray;
     width: 60px;
     height: 60px;
     margin: 3px;
@@ -50,19 +45,91 @@ hr {width: 60%}
 }
 
 /*Green tiles (correct guesses)*/
-.green
-{ background-color: green; }
+.green { background-color: green; }
 
 /*Yellow tiles (incorrect guesses with letter present)*/
-.yellow
-{ background-color: yellow; }
+.yellow { background-color: yellow; }
 
 /*Red tiles (incorrect guesses without letter present)*/
-.red
-{ background-color: darkgray; }
+.red { background-color: darkgray; }
 
-.green, .yellow, .red
+/**Prevent text from being selectable.*/
+.tile, .keyboardKey, .enterKey { user-select: none; }
+
+/*CSS for the on-screen keyboard.*/
+.keyboardRow
 {
-    color: white;
-    border-color: white;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/*CSS for the keyboard's keys. Similar to guessboard tile CSS.*/
+.keyboardKey, .enterKey
+{
+    border: 1px solid black;
+    width: 36px;
+    height: 40px;
+    margin: 1px 2px 1px 2px;
+    cursor: pointer;
+
+    font-size: 125%;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*For the Enter key specifically.*/
+.enterKey { width: 75px; }
+
+/*All of the CSS below this line is animating and styling the alert messages.*/
+#toast
+{
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+  
+#toast.show
+{
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+  
+@-webkit-keyframes fadein
+{
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 1;}
+}
+  
+@keyframes fadein
+{
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout
+{
+    from {bottom: 30px; opacity: 1;} 
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout
+{
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
 }
